@@ -1,0 +1,7 @@
+digraph G {
+"world" -> "radar_frame"[label=" Broadcaster: default_authority\nAverage rate: 10.198\nBuffer length: 5.001\nMost recent transform: 1719929546.184329\nOldest transform: 1719929541.183176\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1719929546.1871214"[ shape=plaintext ] ;
+}->"world";
+}

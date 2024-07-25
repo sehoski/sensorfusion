@@ -1,0 +1,25 @@
+[0.740s] Invoking command in '/home/seho/ros2_ws/src/sensor_fusion_pkg': PYTHONPATH=/home/seho/ros2_ws/build/sensor_fusion_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/seho/ros2_ws/install/sensor_fusion_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/sensor_fusion_pkg build --build-base /home/seho/ros2_ws/build/sensor_fusion_pkg/build install --record /home/seho/ros2_ws/build/sensor_fusion_pkg/install.log --single-version-externally-managed install_data
+[0.888s] running egg_info
+[0.896s] writing ../../build/sensor_fusion_pkg/sensor_fusion_pkg.egg-info/PKG-INFO
+[0.896s] writing dependency_links to ../../build/sensor_fusion_pkg/sensor_fusion_pkg.egg-info/dependency_links.txt
+[0.897s] deleting ../../build/sensor_fusion_pkg/sensor_fusion_pkg.egg-info/entry_points.txt
+[0.897s] writing requirements to ../../build/sensor_fusion_pkg/sensor_fusion_pkg.egg-info/requires.txt
+[0.897s] writing top-level names to ../../build/sensor_fusion_pkg/sensor_fusion_pkg.egg-info/top_level.txt
+[0.914s] reading manifest file '../../build/sensor_fusion_pkg/sensor_fusion_pkg.egg-info/SOURCES.txt'
+[0.915s] writing manifest file '../../build/sensor_fusion_pkg/sensor_fusion_pkg.egg-info/SOURCES.txt'
+[0.915s] running build
+[0.915s] running build_py
+[0.915s] copying sensor_fusion_pkg/__init__.py -> /home/seho/ros2_ws/build/sensor_fusion_pkg/build/lib/sensor_fusion_pkg
+[0.916s] running install
+[0.918s] running install_lib
+[0.929s] copying /home/seho/ros2_ws/build/sensor_fusion_pkg/build/lib/sensor_fusion_pkg/__init__.py -> /home/seho/ros2_ws/install/sensor_fusion_pkg/lib/python3.10/site-packages/sensor_fusion_pkg
+[0.930s] byte-compiling /home/seho/ros2_ws/install/sensor_fusion_pkg/lib/python3.10/site-packages/sensor_fusion_pkg/__init__.py to __init__.cpython-310.pyc
+[0.930s] running install_data
+[0.930s] copying resource/sensor_fusion_pkg -> /home/seho/ros2_ws/install/sensor_fusion_pkg/share/ament_index/resource_index/packages
+[0.930s] copying package.xml -> /home/seho/ros2_ws/install/sensor_fusion_pkg/share/sensor_fusion_pkg
+[0.930s] running install_egg_info
+[0.939s] removing '/home/seho/ros2_ws/install/sensor_fusion_pkg/lib/python3.10/site-packages/sensor_fusion_pkg-0.0.0-py3.10.egg-info' (and everything under it)
+[0.939s] Copying ../../build/sensor_fusion_pkg/sensor_fusion_pkg.egg-info to /home/seho/ros2_ws/install/sensor_fusion_pkg/lib/python3.10/site-packages/sensor_fusion_pkg-0.0.0-py3.10.egg-info
+[0.939s] running install_scripts
+[1.013s] writing list of installed files to '/home/seho/ros2_ws/build/sensor_fusion_pkg/install.log'
+[1.052s] Invoked command in '/home/seho/ros2_ws/src/sensor_fusion_pkg' returned '0': PYTHONPATH=/home/seho/ros2_ws/build/sensor_fusion_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/seho/ros2_ws/install/sensor_fusion_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/sensor_fusion_pkg build --build-base /home/seho/ros2_ws/build/sensor_fusion_pkg/build install --record /home/seho/ros2_ws/build/sensor_fusion_pkg/install.log --single-version-externally-managed install_data
