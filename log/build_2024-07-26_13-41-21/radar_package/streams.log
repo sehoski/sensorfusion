@@ -1,0 +1,25 @@
+[0.787s] Invoking command in '/home/seho/ros2_ws/src/radar_package': PYTHONPATH=/home/seho/ros2_ws/build/radar_package/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/seho/ros2_ws/install/radar_package/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/radar_package build --build-base /home/seho/ros2_ws/build/radar_package/build install --record /home/seho/ros2_ws/build/radar_package/install.log --single-version-externally-managed install_data
+[0.932s] running egg_info
+[0.941s] writing ../../build/radar_package/radar_package.egg-info/PKG-INFO
+[0.941s] writing dependency_links to ../../build/radar_package/radar_package.egg-info/dependency_links.txt
+[0.941s] writing entry points to ../../build/radar_package/radar_package.egg-info/entry_points.txt
+[0.941s] writing requirements to ../../build/radar_package/radar_package.egg-info/requires.txt
+[0.941s] writing top-level names to ../../build/radar_package/radar_package.egg-info/top_level.txt
+[0.957s] reading manifest file '../../build/radar_package/radar_package.egg-info/SOURCES.txt'
+[0.959s] writing manifest file '../../build/radar_package/radar_package.egg-info/SOURCES.txt'
+[0.959s] running build
+[0.959s] running build_py
+[0.960s] copying radar_package/__init__.py -> /home/seho/ros2_ws/build/radar_package/build/lib/radar_package
+[0.960s] copying radar_package/radar_node.py -> /home/seho/ros2_ws/build/radar_package/build/lib/radar_package
+[0.960s] running install
+[0.961s] running install_lib
+[0.970s] running install_data
+[0.971s] copying resource/radar_package -> /home/seho/ros2_ws/install/radar_package/share/ament_index/resource_index/packages
+[0.971s] copying package.xml -> /home/seho/ros2_ws/install/radar_package/share/radar_package
+[0.971s] running install_egg_info
+[0.980s] removing '/home/seho/ros2_ws/install/radar_package/lib/python3.10/site-packages/radar_package-0.0.0-py3.10.egg-info' (and everything under it)
+[0.980s] Copying ../../build/radar_package/radar_package.egg-info to /home/seho/ros2_ws/install/radar_package/lib/python3.10/site-packages/radar_package-0.0.0-py3.10.egg-info
+[0.980s] running install_scripts
+[1.049s] Installing radar_node script to /home/seho/ros2_ws/install/radar_package/lib/radar_package
+[1.049s] writing list of installed files to '/home/seho/ros2_ws/build/radar_package/install.log'
+[1.074s] Invoked command in '/home/seho/ros2_ws/src/radar_package' returned '0': PYTHONPATH=/home/seho/ros2_ws/build/radar_package/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/seho/ros2_ws/install/radar_package/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/radar_package build --build-base /home/seho/ros2_ws/build/radar_package/build install --record /home/seho/ros2_ws/build/radar_package/install.log --single-version-externally-managed install_data

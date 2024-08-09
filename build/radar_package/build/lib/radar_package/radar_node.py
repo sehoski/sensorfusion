@@ -15,14 +15,13 @@ import sys
 
 def distance_to_rgb(distance, max_distance=327.64):
     distance_min = 0
-    distance_max = max_distance  # 거리의 최대값 설정 (필요에 따라 조정 가능)
+    distance_max = max_distance
     normalized_distance = (distance - distance_min) / (distance_max - distance_min)
     normalized_distance = np.clip(normalized_distance, 0, 1)
     
-    # 색상 계산 (가까울수록 빨강색, 멀어질수록 파란색)
     red = int((1 - normalized_distance) * 255)
     blue = int(normalized_distance * 255)
-    green = 0  # 중간색 없이 빨강에서 파랑으로 변환
+    green = 0
 
     return struct.unpack('I', struct.pack('BBBB', blue, green, red, 255))[0]
     
@@ -50,19 +49,19 @@ class ExtendedKalmanFilter:
         self.P = (I - np.dot(K, self.H(self.x))).dot(self.P)
 
 def f(x, u):
-    dt = 0.05  # 타이머 주기와 일치하도록 설정
+    dt = 0.1
     return np.array([
-        x[0] + x[3] * dt * np.cos(x[2]),  # x 위치
-        x[1] + x[3] * dt * np.sin(x[2]),  # y 위치
-        x[2],  # 방향 (여기서는 각속도가 없으므로 그대로 유지)
-        x[3]  # 속도
+        x[0] + x[3] * dt * np.cos(x[2]),
+        x[1] + x[3] * dt * np.sin(x[2]),
+        x[2],
+        x[3]
     ])
 
 def h(x):
-    return np.array([x[0], x[1], x[2], x[3]])  # 모든 상태를 관측 가능하다고 가정
+    return np.array([x[0], x[1], x[2], x[3]])
 
 def F(x, u):
-    dt = 0.05
+    dt = 0.1
     return np.array([
         [1, 0, -x[3] * dt * np.sin(x[2]), dt * np.cos(x[2])],
         [0, 1, x[3] * dt * np.cos(x[2]), dt * np.sin(x[2])],
@@ -71,19 +70,18 @@ def F(x, u):
     ])
 
 def H(x):
-    return np.eye(4)  # 관측 행렬은 단위 행렬로 가정
+    return np.eye(4)
 
 class RadarNode(Node):
     def __init__(self):
         super().__init__('radar_node')
         self.publisher_ = self.create_publisher(PointCloud2, 'radar/points', 10)
-        self.timer = self.create_timer(0.05, self.timer_callback)
+        self.timer = self.create_timer(0.06, self.timer_callback)
         self.tf_broadcaster = TransformBroadcaster(self)
         self.bus = can.interface.Bus(channel='can0', bustype='socketcan')
         self.target_data = []
-        self.raw_data = []  # 필터링되지 않은 데이터를 저장하기 위한 리스트
+        self.raw_data = []
 
-        # EKF 초기화
         Q = np.eye(4) * 0.01
         R = np.eye(4) * 0.1
         P = np.eye(4)
@@ -114,10 +112,10 @@ class RadarNode(Node):
         elevation = parsed_data['elevation']
         noise = parsed_data['noise']
 
-        if distance > 327.64:  # 거리가 10m 이상인 데이터를 무시
+        if distance > 327.64:
             return
 
-        if noise > 30:  # 노이즈 수준이 높은 데이터를 무시
+        if noise > 30:
             return
 
         x = distance * np.cos(np.radians(azimuth_angle)) * np.cos(np.radians(elevation))
@@ -125,15 +123,12 @@ class RadarNode(Node):
         z = distance * np.sin(np.radians(elevation))
         rgb = distance_to_rgb(distance)
 
-        # 필터링되지 않은 데이터를 저장
         self.raw_data.append((x, y, z))
 
-        # EKF 업데이트
         observation = np.array([x, y, azimuth_angle, speed])
         self.ekf.predict(u=0)
         self.ekf.update(observation)
 
-        # 필터링된 상태 추정치 사용
         filtered_x, filtered_y, filtered_azimuth, filtered_speed = self.ekf.x
         self.target_data.append((filtered_x, filtered_y, z, rgb))
 
@@ -200,6 +195,7 @@ class RadarNode(Node):
         ]
         point_cloud = pc2.create_cloud(header, fields, points)
         self.publisher_.publish(point_cloud)
+        self.get_logger().info(f'Published radar points with timestamp: {header.stamp.sec}.{header.stamp.nanosec}')
 
     def send_transform(self):
         t = TransformStamped()
@@ -223,7 +219,7 @@ def main(args=None):
         radar_node.destroy_node()
         rclpy.shutdown()
         plot_data(radar_node.raw_data, radar_node.target_data)
-        raise SystemExit
+        sys.exit(0)
 
     signal.signal(signal.SIGINT, signal_handler)
 
