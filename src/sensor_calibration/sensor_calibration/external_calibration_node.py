@@ -39,17 +39,29 @@ class ExternalCalibrationNode(Node):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         _, thresh = cv2.threshold(gray, 240, 255, cv2.THRESH_BINARY)
         contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        
+        # 가장 큰 밝은 영역을 선택하여 리플렉터 위치 감지
+        max_contour = None
+        max_area = 0
         for contour in contours:
-            M = cv2.moments(contour)
+            area = cv2.contourArea(contour)
+            if area > max_area:
+                max_area = area
+                max_contour = contour
+        
+        if max_contour is not None:
+            M = cv2.moments(max_contour)
             if M['m00'] != 0:
                 cx = int(M['m10'] / M['m00'])
                 cy = int(M['m01'] / M['m00'])
-                return np.array([cx, cy, 0.0])  # z = 0으로 가정하여 반환
+                return np.array([cx, cy, 0.0])  # z = 0 가정
         return None
 
     def detect_reflector_radar(self, points):
         if points.shape[0] > 0:
-            return points[0]  # 첫 번째 점 반환
+            # Z축 값이 가장 작은 포인트를 선택하여 리플렉터 위치로 반환
+            max_reflection_point = points[np.argmin(points[:, 2])]  # Z축 값이 가장 작은 포인트 선택
+            return max_reflection_point
         return None
 
     def match_points(self):
@@ -75,8 +87,10 @@ class ExternalCalibrationNode(Node):
                 errors.append(error)
             return errors
 
-        initial_guess = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-        result = least_squares(objective_function, initial_guess, ftol=1e-6, xtol=1e-6, max_nfev=200)
+        # 초기 추정값 설정: 카메라와 레이더 간의 설치된 위치를 반영
+        initial_guess = np.array([0.0, 0.0, 0.0, 22.0, 10.0, 0.0])  # 레이더가 카메라 기준 Z축으로 7cm 아래에 위치
+
+        result = least_squares(objective_function, initial_guess, ftol=1e-8, xtol=1e-8, max_nfev=500)
 
         R_calibrated = R.from_rotvec(result.x[:3]).as_matrix()
         t_calibrated = result.x[3:]
@@ -85,6 +99,10 @@ class ExternalCalibrationNode(Node):
         self.get_logger().info(f'변환 벡터: {t_calibrated}')
 
         self.visualize_calibration(R_calibrated, t_calibrated)
+
+        # 캘리브레이션 후 데이터 초기화
+        self.camera_data.clear()
+        self.radar_data.clear()
 
         return R_calibrated, t_calibrated
 
@@ -114,7 +132,7 @@ def main(args=None):
     try:
         while rclpy.ok():
             rclpy.spin_once(node)  # 이벤트 처리를 수행하여 데이터 수신
-            if len(node.camera_data) >= 3 and len(node.radar_data) >= 3:
+            if len(node.camera_data) >= 20 and len(node.radar_data) >= 20:
                 node.calibrate()  # 충분한 데이터가 쌓이면 캘리브레이션 실행
                 break  # 캘리브레이션이 완료되면 루프 종료
             node.get_logger().info('충분한 데이터를 기다리는 중...')
