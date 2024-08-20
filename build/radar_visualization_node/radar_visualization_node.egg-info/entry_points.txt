@@ -1,0 +1,2 @@
+[console_scripts]
+radar_visualization = radar_visualization_node.radar_visualization:main

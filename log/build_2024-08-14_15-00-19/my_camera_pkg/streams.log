@@ -1,0 +1,25 @@
+[1.088s] Invoking command in '/home/seho/ros2_ws/src/my_camera_pkg': PYTHONPATH=/home/seho/ros2_ws/build/my_camera_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/seho/ros2_ws/install/my_camera_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/my_camera_pkg build --build-base /home/seho/ros2_ws/build/my_camera_pkg/build install --record /home/seho/ros2_ws/build/my_camera_pkg/install.log --single-version-externally-managed install_data
+[1.239s] running egg_info
+[1.247s] writing ../../build/my_camera_pkg/my_camera_pkg.egg-info/PKG-INFO
+[1.247s] writing dependency_links to ../../build/my_camera_pkg/my_camera_pkg.egg-info/dependency_links.txt
+[1.247s] writing entry points to ../../build/my_camera_pkg/my_camera_pkg.egg-info/entry_points.txt
+[1.248s] writing requirements to ../../build/my_camera_pkg/my_camera_pkg.egg-info/requires.txt
+[1.248s] writing top-level names to ../../build/my_camera_pkg/my_camera_pkg.egg-info/top_level.txt
+[1.266s] reading manifest file '../../build/my_camera_pkg/my_camera_pkg.egg-info/SOURCES.txt'
+[1.266s] writing manifest file '../../build/my_camera_pkg/my_camera_pkg.egg-info/SOURCES.txt'
+[1.266s] running build
+[1.267s] running build_py
+[1.267s] copying my_camera_pkg/__init__.py -> /home/seho/ros2_ws/build/my_camera_pkg/build/lib/my_camera_pkg
+[1.267s] copying my_camera_pkg/camera_node.py -> /home/seho/ros2_ws/build/my_camera_pkg/build/lib/my_camera_pkg
+[1.267s] running install
+[1.270s] running install_lib
+[1.279s] running install_data
+[1.279s] copying resource/my_camera_pkg -> /home/seho/ros2_ws/install/my_camera_pkg/share/ament_index/resource_index/packages
+[1.279s] copying package.xml -> /home/seho/ros2_ws/install/my_camera_pkg/share/my_camera_pkg
+[1.279s] running install_egg_info
+[1.288s] removing '/home/seho/ros2_ws/install/my_camera_pkg/lib/python3.10/site-packages/my_camera_pkg-0.0.0-py3.10.egg-info' (and everything under it)
+[1.288s] Copying ../../build/my_camera_pkg/my_camera_pkg.egg-info to /home/seho/ros2_ws/install/my_camera_pkg/lib/python3.10/site-packages/my_camera_pkg-0.0.0-py3.10.egg-info
+[1.288s] running install_scripts
+[1.362s] Installing camera_node script to /home/seho/ros2_ws/install/my_camera_pkg/lib/my_camera_pkg
+[1.362s] writing list of installed files to '/home/seho/ros2_ws/build/my_camera_pkg/install.log'
+[1.386s] Invoked command in '/home/seho/ros2_ws/src/my_camera_pkg' returned '0': PYTHONPATH=/home/seho/ros2_ws/build/my_camera_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/seho/ros2_ws/install/my_camera_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/my_camera_pkg build --build-base /home/seho/ros2_ws/build/my_camera_pkg/build install --record /home/seho/ros2_ws/build/my_camera_pkg/install.log --single-version-externally-managed install_data

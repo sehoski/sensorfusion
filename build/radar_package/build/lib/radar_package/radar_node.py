@@ -1,147 +1,139 @@
 import can
-from datetime import datetime
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import PointCloud2, PointField
-from std_msgs.msg import Header
-import sensor_msgs_py.point_cloud2 as pc2
 import numpy as np
-import struct
-from tf2_ros import TransformBroadcaster
-from geometry_msgs.msg import TransformStamped
-import matplotlib.pyplot as plt
 import signal
 import sys
-
-def distance_to_rgb(distance, max_distance=327.64):
-    distance_min = 0
-    distance_max = max_distance
-    normalized_distance = (distance - distance_min) / (distance_max - distance_min)
-    normalized_distance = np.clip(normalized_distance, 0, 1)
-    
-    red = int((1 - normalized_distance) * 255)
-    blue = int(normalized_distance * 255)
-    green = 0
-
-    return struct.unpack('I', struct.pack('BBBB', blue, green, red, 255))[0]
-    
-class ExtendedKalmanFilter:
-    def __init__(self, f, h, F, H, Q, R, P, x):
-        self.f = f
-        self.h = h
-        self.F = F
-        self.H = H
-        self.Q = Q
-        self.R = R
-        self.P = P
-        self.x = x
-
-    def predict(self, u=0):
-        self.x = self.f(self.x, u)
-        self.P = np.dot(np.dot(self.F(self.x, u), self.P), self.F(self.x, u).T) + self.Q
-
-    def update(self, z):
-        y = z - self.h(self.x)
-        S = np.dot(self.H(self.x), np.dot(self.P, self.H(self.x).T)) + self.R
-        K = np.dot(np.dot(self.P, self.H(self.x).T), np.linalg.inv(S))
-        self.x = self.x + np.dot(K, y)
-        I = np.eye(self.P.shape[0])
-        self.P = (I - np.dot(K, self.H(self.x))).dot(self.P)
-
-def f(x, u):
-    dt = 0.1
-    return np.array([
-        x[0] + x[3] * dt * np.cos(x[2]),
-        x[1] + x[3] * dt * np.sin(x[2]),
-        x[2],
-        x[3]
-    ])
-
-def h(x):
-    return np.array([x[0], x[1], x[2], x[3]])
-
-def F(x, u):
-    dt = 0.1
-    return np.array([
-        [1, 0, -x[3] * dt * np.sin(x[2]), dt * np.cos(x[2])],
-        [0, 1, x[3] * dt * np.cos(x[2]), dt * np.sin(x[2])],
-        [0, 0, 1, 0],
-        [0, 0, 0, 1]
-    ])
-
-def H(x):
-    return np.eye(4)
+import matplotlib.pyplot as plt
 
 class RadarNode(Node):
     def __init__(self):
         super().__init__('radar_node')
-        self.publisher_ = self.create_publisher(PointCloud2, 'radar/points', 10)
-        self.timer = self.create_timer(0.06, self.timer_callback)
-        self.tf_broadcaster = TransformBroadcaster(self)
         self.bus = can.interface.Bus(channel='can0', bustype='socketcan')
-        self.target_data = []
-        self.raw_data = []
+        self.timer = self.create_timer(0.06, self.timer_callback)
+        self.target_states = {}  # Target 상태를 관리하는 딕셔너리
+        self.filtered_data = []  # 필터링된 데이터를 저장할 리스트
 
-        Q = np.eye(4) * 0.01
-        R = np.eye(4) * 0.1
-        P = np.eye(4)
-        x = np.zeros(4)
-        self.ekf = ExtendedKalmanFilter(f, h, F, H, Q, R, P, x)
+        # 신뢰할 수 있는 노이즈 값의 임계 범위 설정 (30 dB ~ 90 dB)
+        self.noise_threshold = (30, 90)
 
     def timer_callback(self):
         try:
-            batch_size = 10
+            batch_size = 10  # 한 번에 처리할 메시지 개수
             for _ in range(batch_size):
                 message = self.bus.recv(0.005)
                 if message is not None:
                     can_id = message.arbitration_id
-                    if 0x401 <= can_id <= 0x4FF:
-                        parsed_data = self.parse_can_message(message.data)
+                    raw_data = message.data.hex()  # 8바이트 데이터를 16진수 문자열로 변환
+                    if 0x401 <= can_id <= 0x4FF:  # ID가 0x401에서 0x4FF 사이인 경우만 처리
+                        parsed_data, bit_info = self.parse_can_message(message.data)
                         if parsed_data:
-                            self.process_radar_data(parsed_data)
-            if self.target_data:
-                self.publish_points(self.target_data)
+                            # 노이즈 임계값을 초과하는 데이터는 무시
+                            if self.check_noise_threshold(parsed_data['noise']):
+                                self.process_radar_data(parsed_data, can_id, raw_data)
         except Exception as e:
             self.get_logger().error(f"Error in timer_callback: {e}")
-        self.send_transform()
 
-    def process_radar_data(self, parsed_data):
-        distance = parsed_data['range_m']
-        azimuth_angle = parsed_data['azimuth_angle']
-        speed = parsed_data['speed_radial']
-        elevation = parsed_data['elevation']
-        noise = parsed_data['noise']
+    def check_noise_threshold(self, noise):
+        min_noise, max_noise = self.noise_threshold
+        if not (min_noise <= noise <= max_noise):
+            self.get_logger().warn(f"Noise value {noise} dB out of bounds, ignoring.")
+            return False
+        return True
 
-        if distance > 327.64:
-            return
+    def process_radar_data(self, parsed_data, can_id, raw_data):
+        # 각 타깃의 상태를 추적하기 위한 초기화
+        if can_id not in self.target_states:
+            self.target_states[can_id] = {
+                'id_401_count': 0,
+                'first_data': None,
+                'ekf': self.initialize_ekf()  # 확장된 칼만 필터 초기화
+            }
 
-        if noise > 30:
-            return
+        target_state = self.target_states[can_id]
+        target_state['id_401_count'] += 1
 
-        x = distance * np.cos(np.radians(azimuth_angle)) * np.cos(np.radians(elevation))
-        y = distance * np.sin(np.radians(azimuth_angle)) * np.cos(np.radians(elevation))
-        z = distance * np.sin(np.radians(elevation))
-        rgb = distance_to_rgb(distance)
+        if target_state['id_401_count'] == 1:
+            # 첫 번째 데이터 처리
+            swapped_data_1 = self.swap_and_convert_to_64bit(raw_data)
+            target_state['first_data'] = {
+                'x': parsed_data['x'],
+                'y': parsed_data['y'],
+                'z': parsed_data['z'],
+                'speed_radial': parsed_data['speed_radial'],
+                'raw_data_1': raw_data,
+                'swapped_data_1': swapped_data_1['swapped_data'],
+                'swapped_data_1_bin': swapped_data_1['swapped_data_bin']
+            }
+        elif target_state['id_401_count'] == 2:
+            # 두 번째 데이터 처리
+            swapped_data_2 = self.swap_and_convert_to_64bit(raw_data)
+            ekf = target_state['ekf']
 
-        self.raw_data.append((x, y, z))
+            # 확장된 칼만 필터 업데이트
+            z = np.array([parsed_data['x'], parsed_data['y'], parsed_data['z'], parsed_data['speed_radial']])
+            ekf.predict()
+            ekf.update(z)
 
-        observation = np.array([x, y, azimuth_angle, speed])
-        self.ekf.predict(u=0)
-        self.ekf.update(observation)
+            # 필터링된 결과 저장
+            filtered_state = ekf.x
+            self.filtered_data.append({
+                'can_id': can_id,
+                'x': filtered_state[0],
+                'y': filtered_state[1],
+                'z': filtered_state[2],
+                'speed_radial': filtered_state[3]
+            })
 
-        filtered_x, filtered_y, filtered_azimuth, filtered_speed = self.ekf.x
-        self.target_data.append((filtered_x, filtered_y, z, rgb))
+            # 타깃 상태 초기화
+            target_state['id_401_count'] = 0
+            target_state['first_data'] = None
+
+    def initialize_ekf(self):
+        # 초기 상태 벡터 (x, y, z, speed)
+        x = np.zeros(4)
+
+        # 초기 오차 공분산 행렬
+        P = np.diag([1, 1, 1, 1])
+
+        # 상태 전이 행렬
+        F = np.eye(4)
+
+        # 측정 행렬
+        H = np.eye(4)
+
+        # 측정 오차 공분산 행렬
+        R = np.diag([0.1, 0.1, 0.1, 0.1])
+
+        # 프로세스 노이즈 공분산 행렬
+        Q = np.diag([0.1, 0.1, 0.1, 0.1])
+
+        return ExtendedKalmanFilter(x, P, F, H, R, Q)
+
+    def swap_and_convert_to_64bit(self, raw_data):
+        # 16진수 문자열을 바이트 배열로 변환
+        byte_array = bytearray.fromhex(raw_data)
+        # 바이트 순서 반전
+        swapped_byte_array = byte_array[::-1]
+        # 64비트 이진수로 변환
+        swapped_data_bin = ''.join(f"{byte:08b}" for byte in swapped_byte_array)[:64]
+        # 바이트 배열을 다시 16진수 문자열로 변환
+        swapped_data_hex = swapped_byte_array.hex()
+
+        return {
+            'swapped_data': swapped_data_hex,
+            'swapped_data_bin': swapped_data_bin
+        }
 
     def parse_can_message(self, data):
         if len(data) != 8:
             raise ValueError("Expected 8 bytes of data")
 
-        swapped_data = bytearray(8)
-        for i in range(8):
-            swapped_data[i] = data[7 - i]
+        # Swap the data bytes and convert to 64-bit binary
+        swapped_data = np.frombuffer(data, dtype=np.uint8)[::-1]
+        bits = ''.join(np.binary_repr(byte, width=8) for byte in swapped_data)[:64]
 
-        bits = ''.join(f'{byte:08b}' for byte in swapped_data)
-
+        # 데이터 파싱 (range, azimuth, elevation, speed 등으로 가정)
         range_bits = bits[-14:-1]
         range_raw = int(range_bits, 2)
         range_m = range_raw * 0.04
@@ -150,66 +142,88 @@ class RadarNode(Node):
         azimuth_raw = int(azimuth_bits, 2)
         azimuth_angle = (azimuth_raw - 511) * 0.16
 
-        speed_bits = bits[-51:-39]
-        speed_raw = int(speed_bits, 2)
-        speed_radial = (speed_raw - 2992) * 0.04
-
-        rcs_bits = bits[-9:-1]
-        rcs_raw = int(rcs_bits, 2)
-        rcs = rcs_raw * 0.2 - 15
-
-        power_bits = bits[-17:-9]
-        power_raw = int(power_bits, 2)
-        power = power_raw
-
-        noise_bits = bits[-25:-17]
-        noise_raw = int(noise_bits, 2)
-        noise = noise_raw * 0.5
-
-        elevation_bits = bits[-47:-37]
+        elevation_bits = bits[-51:-39]
         elevation_raw = int(elevation_bits, 2)
         elevation = (elevation_raw - 511) * 0.04
 
-        return {
-            'range_m': range_m,
-            'azimuth_angle': azimuth_angle,
+        speed_bits = bits[-9:-1]
+        speed_raw = int(speed_bits, 2)
+        speed_radial = speed_raw * 0.2 - 15
+
+        # 변환 공식을 이용하여 x, y, z 좌표 계산
+        x = range_m * np.cos(np.radians(elevation)) * np.cos(np.radians(azimuth_angle))
+        y = range_m * np.cos(np.radians(elevation)) * np.sin(np.radians(azimuth_angle))
+        z = range_m * np.sin(np.radians(elevation))
+
+        parsed_data = {
+            'x': x,
+            'y': y,
+            'z': z,
             'speed_radial': speed_radial,
-            'rcs': rcs,
-            'power': power,
-            'noise': noise,
-            'elevation': elevation
+            'noise': noise
         }
 
-    def publish_points(self, points):
-        if not points:
-            return
+        return parsed_data, bits
 
-        header = Header()
-        header.stamp = self.get_clock().now().to_msg()
-        header.frame_id = 'radar_frame'
-        fields = [
-            PointField(name='x', offset=0, datatype=PointField.FLOAT32, count=1),
-            PointField(name='y', offset=4, datatype=PointField.FLOAT32, count=1),
-            PointField(name='z', offset=8, datatype=PointField.FLOAT32, count=1),
-            PointField(name='rgb', offset=12, datatype=PointField.UINT32, count=1)
-        ]
-        point_cloud = pc2.create_cloud(header, fields, points)
-        self.publisher_.publish(point_cloud)
-        self.get_logger().info(f'Published radar points with timestamp: {header.stamp.sec}.{header.stamp.nanosec}')
+    def destroy_node(self):
+        self.bus.shutdown()
+        self.visualize_data()
+        self.get_logger().info('CAN bus has been shut down properly.')
+        super().destroy_node()
 
-    def send_transform(self):
-        t = TransformStamped()
-        t.header.stamp = self.get_clock().now().to_msg()
-        t.header.frame_id = 'world'
-        t.child_frame_id = 'radar_frame'
-        t.transform.translation.x = 0.0
-        t.transform.translation.y = 0.0
-        t.transform.translation.z = 0.0
-        t.transform.rotation.x = 0.0
-        t.transform.rotation.y = 0.0
-        t.transform.rotation.z = 0.0
-        t.transform.rotation.w = 1.0
-        self.tf_broadcaster.sendTransform(t)
+    def visualize_data(self):
+        xs = [data['x'] for data in self.filtered_data]
+        ys = [data['y'] for data in self.filtered_data]
+        zs = [data['z'] for data in self.filtered_data]
+        speeds = [data['speed_radial'] for data in self.filtered_data]
+
+        plt.figure(figsize=(12, 8))
+
+        plt.subplot(4, 1, 1)
+        plt.plot(xs, label='X Position (m)')
+        plt.title('Filtered X Position')
+        plt.legend()
+
+        plt.subplot(4, 1, 2)
+        plt.plot(ys, label='Y Position (m)')
+        plt.title('Filtered Y Position')
+        plt.legend()
+
+        plt.subplot(4, 1, 3)
+        plt.plot(zs, label='Z Position (m)')
+        plt.title('Filtered Z Position')
+        plt.legend()
+
+        plt.subplot(4, 1, 4)
+        plt.plot(speeds, label='Speed Radial (m/s)')
+        plt.title('Filtered Speed Radial')
+        plt.legend()
+
+        plt.tight_layout()
+        plt.show()
+
+class ExtendedKalmanFilter:
+    def __init__(self, x, P, F, H, R, Q):
+        self.x = x
+        self.P = P
+        self.F = F
+        self.H = H
+        self.R = R
+        self.Q = Q
+
+    def predict(self):
+        # 예측 단계
+        self.x = self.F @ self.x
+        self.P = self.F @ self.P @ self.F.T + self.Q
+
+    def update(self, z):
+        # 측정 업데이트 단계
+        y = z - self.H @ self.x  # Innovation
+        S = self.H @ self.P @ self.H.T + self.R  # Innovation covariance
+        K = self.P @ self.H.T @ np.linalg.inv(S)  # Kalman gain
+
+        self.x = self.x + K @ y
+        self.P = (np.eye(len(self.x)) - K @ self.H) @ self.P
 
 def main(args=None):
     rclpy.init(args=args)
@@ -218,37 +232,11 @@ def main(args=None):
     def signal_handler(sig, frame):
         radar_node.destroy_node()
         rclpy.shutdown()
-        plot_data(radar_node.raw_data, radar_node.target_data)
         sys.exit(0)
 
     signal.signal(signal.SIGINT, signal_handler)
 
     rclpy.spin(radar_node)
-
-def plot_data(raw_data, filtered_data):
-    if raw_data and filtered_data:
-        raw_x, raw_y, raw_z = zip(*raw_data)
-        filtered_x, filtered_y, filtered_z, _ = zip(*filtered_data)
-
-        plt.figure(figsize=(10, 5))
-
-        plt.subplot(1, 2, 1)
-        plt.scatter(raw_x, raw_y, c='blue', label='Raw Data')
-        plt.title('Raw Data')
-        plt.xlabel('X')
-        plt.ylabel('Y')
-        plt.legend()
-
-        plt.subplot(1, 2, 2)
-        plt.scatter(filtered_x, filtered_y, c='red', label='Filtered Data')
-        plt.title('Filtered Data')
-        plt.xlabel('X')
-        plt.ylabel('Y')
-        plt.legend()
-
-        plt.show()
-    else:
-        print("No data to plot.")
 
 if __name__ == '__main__':
     main()
