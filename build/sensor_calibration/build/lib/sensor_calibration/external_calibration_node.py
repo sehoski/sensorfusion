@@ -31,7 +31,7 @@ class ExternalCalibrationNode(Node):
     def radar_callback(self, msg):
         # 레이더 포인트 클라우드 수신 후 리플렉터 위치를 감지
         radar_points = np.array(list(pc2.read_points(msg, field_names=("x", "y", "z", "intensity"))))
-        valid_points = radar_points[radar_points[:, 3] > 15]  # RCS 필터링 (RCS가 15 이상인 포인트만 선택)
+        valid_points = radar_points[radar_points[:, 3] > 90]  # RCS 필터링 (RCS가 15 이상인 포인트만 선택)
         if valid_points.shape[0] > 0:
             max_reflection_point = valid_points[np.argmax(valid_points[:, 3])]  # RCS 값이 가장 큰 포인트 선택
             self.radar_data.append(max_reflection_point[:3])
@@ -143,4 +143,3 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
-
