@@ -1,168 +1,211 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
-from geometry_msgs.msg import Point
+from geometry_msgs.msg import PointStamped
 from cv_bridge import CvBridge
 import cv2
 import numpy as np
+from scipy.spatial.transform import Rotation as R
+from scipy.optimize import least_squares
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from collections import deque
+import message_filters
+import signal
 
 class ExternalCalibrationNode(Node):
     def __init__(self):
         super().__init__('external_calibration_node')
+        self.get_logger().info("Initializing ExternalCalibrationNode")
         self.bridge = CvBridge()
-        self.camera_sub = self.create_subscription(Image, 'camera/image_raw', self.camera_callback, 10)
-        self.radar_sub = self.create_subscription(Point, 'radar/transformed_point', self.radar_callback, 10)
-        self.camera_data = []
-        self.radar_data = []
-        self.matching_points = []
+
+        # Use message filters for time synchronization
+        self.camera_sub = message_filters.Subscriber(self, Image, 'camera/image_raw')
+        self.radar_sub = message_filters.Subscriber(self, PointStamped, 'radar/transformed_point')
+
+        # Message synchronization with a time tolerance of 0.1 seconds
+        ts = message_filters.ApproximateTimeSynchronizer([self.camera_sub, self.radar_sub], 10, 0.1)
+        ts.registerCallback(self.synchronized_callback)
+
+        # Use deque with a maximum length to manage memory
+        self.matching_points = deque(maxlen=100)
+        self.camera_only_points = deque(maxlen=100)  # To store camera points when there's no match
+        self.radar_only_points = deque(maxlen=100)  # To store radar points when there's no match
+
+        # Set the threshold for reflector detection as a ROS parameter
+        self.declare_parameter('reflector_threshold', 200)
+        self.reflector_threshold = self.get_parameter('reflector_threshold').value
+
+        # Add flags for calibration status and shutdown request
         self.calibration_done = False
-        self.create_timer(1.0, self.check_calibration)  # 1초마다 캘리브레이션 상태 확인
+        self.shutdown_requested = False
 
-    def camera_callback(self, msg):
-        cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+        # Add variables to store calibration results
+        self.R_calibrated = np.eye(3)
+        self.t_calibrated = np.zeros(3)
+        self.rmse = None
+
+        # Add a timer for status output
+        self.create_timer(1.0, self.print_status)
+
+        # Set up real-time 3D visualization
+        self.fig = plt.figure(figsize=(10, 8))
+        self.ax = self.fig.add_subplot(111, projection='3d')
+        self.radar_scatter = self.ax.scatter([], [], [], c='r', marker='^', label='Radar Points')
+        self.transformed_scatter = self.ax.scatter([], [], [], c='g', marker='o', label='Transformed Radar Points')
+        self.camera_scatter = self.ax.scatter([], [], [], c='b', marker='s', label='Camera Points')
+
+        self.ax.set_xlabel('X')
+        self.ax.set_ylabel('Y')
+        self.ax.set_zlabel('Z')
+        self.ax.legend()
+        plt.show(block=False)
+
+    def synchronized_callback(self, camera_msg, radar_msg):
+        self.get_logger().info(f"Received synchronized data: Camera timestamp: {camera_msg.header.stamp.sec}.{camera_msg.header.stamp.nanosec}, Radar timestamp: {radar_msg.header.stamp.sec}.{radar_msg.header.stamp.nanosec}")
+
+        # Debugging: Log the radar message data
+        self.get_logger().info(f"Radar Point: x={radar_msg.point.x}, y={radar_msg.point.y}, z={radar_msg.point.z}")
+
+        cv_image = self.bridge.imgmsg_to_cv2(camera_msg, desired_encoding='bgr8')
         reflector_position = self.detect_reflector(cv_image)
+
+        radar_point = np.array([radar_msg.point.x, radar_msg.point.y, radar_msg.point.z])
+
         if reflector_position is not None:
-            self.camera_data.append(reflector_position)
-            self.get_logger().info(f'Reflector detected in camera at {reflector_position}')
+            self.matching_points.append((reflector_position, radar_point))
+            self.get_logger().info(f'Matched Points: Camera {reflector_position}, Radar {radar_point}')
+        else:
+            # If no match is found, store the points separately
+            self.camera_only_points.append(reflector_position if reflector_position is not None else np.array([np.nan, np.nan, np.nan]))
+            self.radar_only_points.append(radar_point)
+            self.get_logger().info(f'Added Radar Point: {radar_point}')
 
-    def radar_callback(self, msg):
-        radar_point = np.array([msg.x, msg.y, msg.z])
-        self.radar_data.append(radar_point)
-        self.get_logger().info(f'Radar point received: {radar_point}')
+        self.get_logger().info(f'Current Matched Points Count: {len(self.matching_points)}')
+        self.get_logger().info(f'Current Matching Points: {self.matching_points}')
 
-    def check_calibration(self):
-        self.get_logger().info(f"Current data points: Camera {len(self.camera_data)}, Radar {len(self.radar_data)}")
-        if not self.calibration_done and len(self.radar_data) >= 20 and len(self.camera_data) >= 20:
-            self.get_logger().info("Starting calibration...")
-            R_calibrated, t_calibrated = self.calibrate()
-            if R_calibrated is not None and t_calibrated is not None:
-                self.calibration_done = True
-                self.get_logger().info("Calibration completed. Displaying graph...")
-                self.visualize_calibration(R_calibrated, t_calibrated)
-                plt.show(block=False)
-                plt.pause(0.001)  # 그래프 업데이트를 위한 잠시 멈춤
-                self.get_logger().info("Graph displayed. Press Ctrl+C to exit.")
+        if len(self.matching_points) >= 5 and not self.calibration_done:
+            self.get_logger().info("Starting Calibration")
+            self.calibrate()
+        
+        # Update the plot regardless of whether calibration is done
+        self.update_plot()
+
+    def update_plot(self):
+        if not self.matching_points and not self.camera_only_points and not self.radar_only_points:
+            self.get_logger().warn("No points to plot.")
+            return
+
+        if self.matching_points:
+            camera_points, radar_points = zip(*self.matching_points)
+            camera_points = np.array(camera_points)
+            radar_points = np.array(radar_points)
+            transformed_points = (self.R_calibrated @ radar_points.T).T + self.t_calibrated
+
+            self.transformed_scatter._offsets3d = (transformed_points[:, 0], transformed_points[:, 1], transformed_points[:, 2])
+            self.camera_scatter._offsets3d = (camera_points[:, 0], camera_points[:, 1], camera_points[:, 2])
+        else:
+            camera_points = radar_points = transformed_points = np.array([])
+
+        if self.radar_only_points:
+            radar_points_only = np.array(self.radar_only_points)
+            if radar_points_only.size > 0:
+                self.radar_scatter._offsets3d = (radar_points_only[:, 0], radar_points_only[:, 1], radar_points_only[:, 2])
+
+        if self.camera_only_points:
+            camera_points_only = np.array(self.camera_only_points)
+            if camera_points_only.size > 0:
+                self.camera_scatter._offsets3d = (camera_points_only[:, 0], camera_points_only[:, 1], camera_points_only[:, 2])
+
+        # Set plot limits to ensure data visibility
+        self.ax.set_xlim([-1, 1])  # Customize this range based on your data
+        self.ax.set_ylim([-1, 1])
+        self.ax.set_zlim([-1, 1])
+
+        self.ax.relim()
+        self.ax.autoscale_view()
+
+        # Debugging: Print the points being plotted
+        self.get_logger().info(f"Radar Points: {radar_points if radar_points.size > 0 else 'N/A'}")
+        self.get_logger().info(f"Transformed Points: {transformed_points if transformed_points.size > 0 else 'N/A'}")
+        self.get_logger().info(f"Camera Points: {camera_points if camera_points.size > 0 else 'N/A'}")
+
+        self.fig.canvas.draw()
+
+    def print_status(self):
+        self.get_logger().info(f'Current Status: Matched Points Count = {len(self.matching_points)}, Calibration Completed = {self.calibration_done}')
 
     def detect_reflector(self, image):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        _, thresh = cv2.threshold(gray, 240, 255, cv2.THRESH_BINARY)
+        _, thresh = cv2.threshold(gray, self.reflector_threshold, 255, cv2.THRESH_BINARY)
         contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        
-        max_contour = max(contours, key=cv2.contourArea, default=None)
-        
-        if max_contour is not None:
-            M = cv2.moments(max_contour)
-            if M['m00'] != 0:
-                cx = int(M['m10'] / M['m00'])
-                cy = int(M['m01'] / M['m00'])
-                return np.array([cx, cy, 0.0])
-        return None
 
-    def match_points(self):
-        min_len = min(len(self.camera_data), len(self.radar_data))
-        if min_len >= 3:
-            self.matching_points = list(zip(self.camera_data[:min_len], self.radar_data[:min_len]))
-        else:
-            self.get_logger().warn('Not enough matching points for calibration.')
+        if not contours:
+            self.get_logger().warn('Could not find contours in the image')
+            return None
 
-    def rotation_matrix(self, angles):
-        x, y, z = angles
-        Rx = np.array([[1, 0, 0], [0, np.cos(x), -np.sin(x)], [0, np.sin(x), np.cos(x)]])
-        Ry = np.array([[np.cos(y), 0, np.sin(y)], [0, 1, 0], [-np.sin(y), 0, np.cos(y)]])
-        Rz = np.array([[np.cos(z), -np.sin(z), 0], [np.sin(z), np.cos(z), 0], [0, 0, 1]])
-        return Rz @ Ry @ Rx
+        max_contour = max(contours, key=cv2.contourArea)
+        M = cv2.moments(max_contour)
 
-    def objective_function(self, params):
-        angles, t_vector = params[:3], params[3:]
-        R_matrix = self.rotation_matrix(angles)
-        errors = []
-        for camera_point, radar_point in self.matching_points:
-            transformed_point = R_matrix @ np.array(radar_point) + t_vector
-            error = np.linalg.norm(transformed_point - camera_point)
-            errors.append(error)
-        return np.mean(errors)
+        if M['m00'] == 0:
+            self.get_logger().warn('Invalid contour moments')
+            return None
 
-    def gradient_descent(self, initial_guess, learning_rate=0.01, num_iterations=1000):
-        params = initial_guess
-        for _ in range(num_iterations):
-            grad = np.zeros_like(params)
-            for i in range(len(params)):
-                h = np.zeros_like(params)
-                h[i] = 1e-4  # small step
-                grad[i] = (self.objective_function(params + h) - self.objective_function(params - h)) / (2 * h[i])
-            params -= learning_rate * grad
-        return params
+        cx = int(M['m10'] / M['m00'])
+        cy = int(M['m01'] / M['m00'])
+        return np.array([cx, cy, 0.0])
 
     def calibrate(self):
-        self.match_points()
         if len(self.matching_points) < 3:
-            self.get_logger().warn('Not enough matching points for calibration. Gathering more data...')
-            return None, None
+            self.get_logger().warn('Not enough matched points for calibration. Collecting more data...')
+            return
+
+        def objective_function(params):
+            R_matrix = R.from_rotvec(params[:3]).as_matrix()
+            t_vector = params[3:]
+            errors = []
+            for camera_point, radar_point in self.matching_points:
+                transformed_point = R_matrix @ np.array(radar_point) + t_vector
+                error = np.linalg.norm(transformed_point - camera_point)
+                errors.append(error)
+            return errors
 
         initial_guess = np.array([0.0, 0.0, 0.0, 0.0, 0.0, -0.07])
-        result = self.gradient_descent(initial_guess)
+        result = least_squares(objective_function, initial_guess, method='lm', ftol=1e-8, xtol=1e-8, max_nfev=1000)
 
-        R_calibrated = self.rotation_matrix(result[:3])
-        t_calibrated = result[3:]
+        self.R_calibrated = R.from_rotvec(result.x[:3]).as_matrix()
+        self.t_calibrated = result.x[3:]
+        self.rmse = np.sqrt(np.mean(np.square(result.fun)))
 
-        self.get_logger().info(f'Calibration complete. Rotation Matrix:\n{R_calibrated}')
-        self.get_logger().info(f'Translation Vector: {t_calibrated}')
+        self.calibration_done = True
+        self.get_logger().info(f'Calibration Completed. RMSE: {self.rmse}')
+        self.get_logger().info(f'Rotation Matrix:\n{self.R_calibrated}')
+        self.get_logger().info(f'Translation Vector: {self.t_calibrated}')
 
-        return R_calibrated, t_calibrated
-
-    def visualize_calibration(self, R_calibrated, t_calibrated):
-        plt.figure(figsize=(15, 5))
-        
-        # 3D plot
-        ax1 = plt.subplot(121, projection='3d')
-        camera_points = np.array(self.camera_data)
-        radar_points = np.array(self.radar_data)
-        transformed_radar_points = np.dot(R_calibrated, radar_points.T).T + t_calibrated
-
-        ax1.scatter(camera_points[:, 0], camera_points[:, 1], camera_points[:, 2], c='b', marker='o', label='Camera Points')
-        ax1.scatter(radar_points[:, 0], radar_points[:, 1], radar_points[:, 2], c='r', marker='^', label='Radar Points')
-        ax1.scatter(transformed_radar_points[:, 0], transformed_radar_points[:, 1], transformed_radar_points[:, 2], c='g', marker='x', label='Transformed Radar Points')
-
-        ax1.set_xlabel('X axis')
-        ax1.set_ylabel('Y axis')
-        ax1.set_zlabel('Z axis')
-        ax1.legend()
-
-        # 2D plot (top-down view)
-        ax2 = plt.subplot(122)
-        ax2.scatter(camera_points[:, 0], camera_points[:, 1], c='b', marker='o', label='Camera Points')
-        ax2.scatter(radar_points[:, 0], radar_points[:, 1], c='r', marker='^', label='Radar Points')
-        ax2.scatter(transformed_radar_points[:, 0], transformed_radar_points[:, 1], c='g', marker='x', label='Transformed Radar Points')
-        
-        for i in range(len(radar_points)):
-            ax2.arrow(0, 0, radar_points[i, 0], radar_points[i, 1], color='r', alpha=0.5, width=0.001)
-            ax2.annotate(f'{np.linalg.norm(radar_points[i]):.2f}m', (radar_points[i, 0], radar_points[i, 1]))
-
-        ax2.set_xlabel('X axis')
-        ax2.set_ylabel('Y axis')
-        ax2.legend()
-        ax2.axis('equal')
-
-        plt.tight_layout()
+    def signal_handler(self):
+        self.get_logger().info("Ctrl+C detected. Shutting down.")
+        self.shutdown_requested = True
+        plt.close(self.fig)
 
 def main(args=None):
     rclpy.init(args=args)
     node = ExternalCalibrationNode()
 
+    def sigint_handler(sig, frame):
+        node.signal_handler()
+
+    signal.signal(signal.SIGINT, sigint_handler)
+
     try:
-        rclpy.spin(node)
-    except KeyboardInterrupt:
-        print("Keyboard interrupt detected. Shutting down...")
+        while rclpy.ok() and not node.shutdown_requested:
+            rclpy.spin_once(node, timeout_sec=0.1)
+            plt.pause(0.01)  # Process plt events every frame
     except Exception as e:
-        print(f"Unexpected error: {e}")
+        node.get_logger().error(f"Main loop error: {e}")
     finally:
         node.destroy_node()
-        try:
-            rclpy.try_shutdown()
-        except:
-            print("ROS 2 context already shut down.")
+        rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
+
