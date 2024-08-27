@@ -10,6 +10,7 @@ import tf2_ros
 import transforms3d  # tf-transformations 대신 사용
 import sensor_msgs_py.point_cloud2 as pc2
 import json
+import time  # 타임스탬프를 위해 추가
 
 class ExternalCalibrationNode(Node):
     def __init__(self):
@@ -196,9 +197,12 @@ class ExternalCalibrationNode(Node):
                 'translation': self.calib_params[:3].tolist(),
                 'rotation': self.calib_params[3:].tolist()
             }
-            with open('calibration_result.json', 'w') as f:
+            # 타임스탬프를 이용해 파일 이름에 고유한 값을 추가
+            timestamp = time.strftime("%Y%m%d-%H%M%S")
+            filename = f'calibration_result_{timestamp}.json'
+            with open(filename, 'w') as f:
                 json.dump(calib_data, f)
-            self.get_logger().info('Saved calibration result to file')
+            self.get_logger().info(f'Saved calibration result to {filename}')
 
     def load_calibration_result(self):
         try:

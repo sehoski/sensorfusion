@@ -16,9 +16,9 @@ class RadarNode(Node):
         self.target_states = {}  # 타겟 상태를 관리하는 딕셔너리
         
         # RCS 임계값 설정 (dB 단위)
-        self.rcs_threshold = 28.0  # 예: 35 dB 이상의 RCS를 가진 물체만 처리
+        self.rcs_threshold = 25.0  # 예: 35 dB 이상의 RCS를 가진 물체만 처리
         # Noise 임계값 설정 (dB 단위)
-        self.noise_threshold = 80.0  # 예: 85 dB 이하의 noise를 가진 데이터만 처리
+        self.noise_threshold = 83.0  # 예: 85 dB 이하의 noise를 가진 데이터만 처리
 
         # PointCloud2 퍼블리셔 생성
         self.point_cloud_pub = self.create_publisher(PointCloud2, '/radar/points', 10)
