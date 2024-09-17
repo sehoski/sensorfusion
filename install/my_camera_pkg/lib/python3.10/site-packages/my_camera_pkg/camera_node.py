@@ -4,6 +4,7 @@ from sensor_msgs.msg import Image, CameraInfo
 from cv_bridge import CvBridge, CvBridgeError
 import cv2
 import numpy as np
+from ultralytics import YOLO
 
 class CameraNode(Node):
     def __init__(self):
@@ -30,6 +31,9 @@ class CameraNode(Node):
         self.camera_info_msg.d = self.dist_coeffs.flatten().tolist()
         self.camera_info_msg.k = self.camera_matrix.flatten().tolist()
 
+        # YOLOv8 모델 로드
+        self.model = YOLO('my_camera_pkg/models/yolov8n.pt')  # YOLOv8 모델 경로 설정
+
     def timer_callback(self):
         ret, frame = self.cap.read()
         if ret:
@@ -39,13 +43,42 @@ class CameraNode(Node):
                 self.new_camera_matrix, _ = cv2.getOptimalNewCameraMatrix(
                     self.camera_matrix, self.dist_coeffs, (w, h), 1, (w, h)
                 )
-                self.camera_info_msg.p = self.new_camera_matrix.flatten().tolist() + [0, 0, 0]  # 3x4 projection matrix
+                self.camera_info_msg.p = self.new_camera_matrix.flatten().tolist() + [0, 0, 0]
 
             # 이미지 왜곡 보정
             undistorted_frame = cv2.undistort(frame, self.camera_matrix, self.dist_coeffs, None, self.new_camera_matrix)
 
+            # YOLOv8을 사용한 객체 감지 수행
+            results = self.model.predict(source=undistorted_frame, imgsz=640)
+            
+            # 원하는 클래스만 필터링 (사람: 0, 자전거: 1, 자동차: 2)
+            desired_classes = [0, 1, 2]
+            filtered_boxes = []
+            
+            # YOLOv8의 boxes에서 클래스 필터링
+            for result in results:
+                for box in result.boxes:
+                    if int(box.cls.cpu().numpy()) in desired_classes:
+                        filtered_boxes.append(box)
+
+            # 필터링된 결과로 수동으로 주석 추가
+            for box in filtered_boxes:
+                x1, y1, x2, y2 = map(int, box.xyxy[0].cpu().numpy())  # 바운딩 박스 좌표
+                cls = int(box.cls.cpu().numpy())  # 클래스
+                conf = float(box.conf.cpu().numpy().item())  # 신뢰도를 스칼라 값으로 변환
+                label = f'{self.model.names[cls]} {conf:.2f}'  # 클래스 이름과 신뢰도 표시
+
+                # 바운딩 박스 그리기
+                cv2.rectangle(undistorted_frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                # 클래스 이름과 신뢰도 텍스트 추가
+                cv2.putText(undistorted_frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
+
             try:
-                # 이미지 퍼블리시
+                # OpenCV로 실시간 이미지 보기
+                cv2.imshow('YOLOv8 Detection', undistorted_frame)
+                cv2.waitKey(1)  # 적절한 프레임 속도를 유지하기 위해 필요
+
+                # CvBridge를 사용하여 OpenCV 이미지를 ROS 메시지로 변환
                 img_msg = self.bridge.cv2_to_imgmsg(undistorted_frame, 'bgr8')
                 img_msg.header.stamp = self.get_clock().now().to_msg()
                 img_msg.header.frame_id = "camera_frame"
@@ -61,7 +94,7 @@ class CameraNode(Node):
 
     def destroy_node(self):
         self.cap.release()
-        cv2.destroyAllWindows()
+        cv2.destroyAllWindows()  # OpenCV 창 닫기
         super().destroy_node()
 
 def main(args=None):
@@ -77,3 +110,4 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
+
