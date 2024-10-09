@@ -1,2 +1,0 @@
-[console_scripts]
-external_calibration_node = sensor_calibration.external_calibration_node:main

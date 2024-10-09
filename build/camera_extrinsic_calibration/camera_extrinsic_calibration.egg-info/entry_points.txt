@@ -1,2 +1,0 @@
-[console_scripts]
-camera_extrinsic_calibration = camera_extrinsic_calibration.camera_extrinsic_calibration_node:main

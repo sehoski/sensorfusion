@@ -1,2 +1,0 @@
-[console_scripts]
-ros_gps_publisher = ros_flask_gps.ros_gps_publisher:main

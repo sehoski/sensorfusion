@@ -1,2 +1,0 @@
-[console_scripts]
-radar_node = radar_package.radar_node:main

@@ -1,8 +1,0 @@
-Metadata-Version: 2.1
-Name: radar_visualization_node
-Version: 0.0.0
-Summary: Radar Visualization Node for ROS 2
-Maintainer: Your Name
-Maintainer-email: your.email@example.com
-License: License declaration
-Requires-Dist: setuptools
