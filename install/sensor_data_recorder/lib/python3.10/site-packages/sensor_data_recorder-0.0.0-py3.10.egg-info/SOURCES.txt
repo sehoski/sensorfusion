@@ -1,0 +1,16 @@
+package.xml
+setup.cfg
+setup.py
+../../build/sensor_data_recorder/sensor_data_recorder.egg-info/PKG-INFO
+../../build/sensor_data_recorder/sensor_data_recorder.egg-info/SOURCES.txt
+../../build/sensor_data_recorder/sensor_data_recorder.egg-info/dependency_links.txt
+../../build/sensor_data_recorder/sensor_data_recorder.egg-info/entry_points.txt
+../../build/sensor_data_recorder/sensor_data_recorder.egg-info/requires.txt
+../../build/sensor_data_recorder/sensor_data_recorder.egg-info/top_level.txt
+../../build/sensor_data_recorder/sensor_data_recorder.egg-info/zip-safe
+resource/sensor_data_recorder
+sensor_data_recorder/__init__.py
+sensor_data_recorder/sensor_data_recorder.py
+test/test_copyright.py
+test/test_flake8.py
+test/test_pep257.py

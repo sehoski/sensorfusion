@@ -1,0 +1,5 @@
+  File "/home/seho/ros2_ws/install/radar_package/lib/python3.10/site-packages/radar_package/radar_node.py", line 274
+    data['
+         ^
+SyntaxError: unterminated string literal (detected at line 274)
+

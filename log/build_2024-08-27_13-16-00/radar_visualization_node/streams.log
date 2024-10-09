@@ -1,0 +1,25 @@
+[1.271s] Invoking command in '/home/seho/ros2_ws/src/radar_visualization_node': PYTHONPATH=/home/seho/ros2_ws/build/radar_visualization_node/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/seho/ros2_ws/install/radar_visualization_node/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/radar_visualization_node build --build-base /home/seho/ros2_ws/build/radar_visualization_node/build install --record /home/seho/ros2_ws/build/radar_visualization_node/install.log --single-version-externally-managed install_data
+[1.427s] running egg_info
+[1.435s] writing ../../build/radar_visualization_node/radar_visualization_node.egg-info/PKG-INFO
+[1.436s] writing dependency_links to ../../build/radar_visualization_node/radar_visualization_node.egg-info/dependency_links.txt
+[1.436s] writing entry points to ../../build/radar_visualization_node/radar_visualization_node.egg-info/entry_points.txt
+[1.436s] writing requirements to ../../build/radar_visualization_node/radar_visualization_node.egg-info/requires.txt
+[1.436s] writing top-level names to ../../build/radar_visualization_node/radar_visualization_node.egg-info/top_level.txt
+[1.454s] reading manifest file '../../build/radar_visualization_node/radar_visualization_node.egg-info/SOURCES.txt'
+[1.454s] writing manifest file '../../build/radar_visualization_node/radar_visualization_node.egg-info/SOURCES.txt'
+[1.455s] running build
+[1.455s] running build_py
+[1.455s] copying radar_visualization_node/__init__.py -> /home/seho/ros2_ws/build/radar_visualization_node/build/lib/radar_visualization_node
+[1.455s] copying radar_visualization_node/radar_visualization.py -> /home/seho/ros2_ws/build/radar_visualization_node/build/lib/radar_visualization_node
+[1.455s] running install
+[1.458s] running install_lib
+[1.467s] running install_data
+[1.467s] copying resource/radar_visualization_node -> /home/seho/ros2_ws/install/radar_visualization_node/share/ament_index/resource_index/packages
+[1.467s] copying package.xml -> /home/seho/ros2_ws/install/radar_visualization_node/share/radar_visualization_node
+[1.467s] running install_egg_info
+[1.476s] removing '/home/seho/ros2_ws/install/radar_visualization_node/lib/python3.10/site-packages/radar_visualization_node-0.0.0-py3.10.egg-info' (and everything under it)
+[1.477s] Copying ../../build/radar_visualization_node/radar_visualization_node.egg-info to /home/seho/ros2_ws/install/radar_visualization_node/lib/python3.10/site-packages/radar_visualization_node-0.0.0-py3.10.egg-info
+[1.477s] running install_scripts
+[1.555s] Installing radar_visualization script to /home/seho/ros2_ws/install/radar_visualization_node/lib/radar_visualization_node
+[1.555s] writing list of installed files to '/home/seho/ros2_ws/build/radar_visualization_node/install.log'
+[1.596s] Invoked command in '/home/seho/ros2_ws/src/radar_visualization_node' returned '0': PYTHONPATH=/home/seho/ros2_ws/build/radar_visualization_node/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/seho/ros2_ws/install/radar_visualization_node/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/radar_visualization_node build --build-base /home/seho/ros2_ws/build/radar_visualization_node/build install --record /home/seho/ros2_ws/build/radar_visualization_node/install.log --single-version-externally-managed install_data
