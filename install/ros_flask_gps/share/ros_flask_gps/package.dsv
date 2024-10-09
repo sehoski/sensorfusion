@@ -1,0 +1,12 @@
+source;share/ros_flask_gps/hook/path.ps1
+source;share/ros_flask_gps/hook/path.dsv
+source;share/ros_flask_gps/hook/path.sh
+source;share/ros_flask_gps/hook/pythonpath.ps1
+source;share/ros_flask_gps/hook/pythonpath.dsv
+source;share/ros_flask_gps/hook/pythonpath.sh
+source;share/ros_flask_gps/hook/pythonscriptspath.ps1
+source;share/ros_flask_gps/hook/pythonscriptspath.dsv
+source;share/ros_flask_gps/hook/pythonscriptspath.sh
+source;share/ros_flask_gps/hook/ament_prefix_path.ps1
+source;share/ros_flask_gps/hook/ament_prefix_path.dsv
+source;share/ros_flask_gps/hook/ament_prefix_path.sh

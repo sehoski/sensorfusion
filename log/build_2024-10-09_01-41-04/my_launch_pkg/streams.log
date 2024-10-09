@@ -1,0 +1,25 @@
+[1.543s] Invoking command in '/home/seho/ros2_ws/src/my_launch_pkg': PYTHONPATH=/home/seho/ros2_ws/build/my_launch_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/seho/ros2_ws/install/my_launch_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/my_launch_pkg build --build-base /home/seho/ros2_ws/build/my_launch_pkg/build install --record /home/seho/ros2_ws/build/my_launch_pkg/install.log --single-version-externally-managed install_data
+[1.636s] /home/seho/.local/lib/python3.10/site-packages/setuptools/_distutils/dist.py:261: UserWarning: Unknown distribution option: 'tests_require'
+[1.636s]   warnings.warn(msg)
+[1.692s] running egg_info
+[1.701s] writing ../../build/my_launch_pkg/my_launch_pkg.egg-info/PKG-INFO
+[1.701s] writing dependency_links to ../../build/my_launch_pkg/my_launch_pkg.egg-info/dependency_links.txt
+[1.702s] writing requirements to ../../build/my_launch_pkg/my_launch_pkg.egg-info/requires.txt
+[1.702s] writing top-level names to ../../build/my_launch_pkg/my_launch_pkg.egg-info/top_level.txt
+[1.723s] reading manifest file '../../build/my_launch_pkg/my_launch_pkg.egg-info/SOURCES.txt'
+[1.724s] writing manifest file '../../build/my_launch_pkg/my_launch_pkg.egg-info/SOURCES.txt'
+[1.724s] running build
+[1.724s] running build_py
+[1.726s] copying my_launch_pkg/__init__.py -> /home/seho/ros2_ws/build/my_launch_pkg/build/lib/my_launch_pkg
+[1.726s] running install
+[1.728s] running install_lib
+[1.740s] running install_data
+[1.741s] copying resource/my_launch_pkg -> /home/seho/ros2_ws/install/my_launch_pkg/share/ament_index/resource_index/packages
+[1.741s] copying package.xml -> /home/seho/ros2_ws/install/my_launch_pkg/share/my_launch_pkg
+[1.742s] copying launch/my_launch_file.py -> /home/seho/ros2_ws/install/my_launch_pkg/share/my_launch_pkg/launch
+[1.742s] running install_egg_info
+[1.752s] removing '/home/seho/ros2_ws/install/my_launch_pkg/lib/python3.10/site-packages/my_launch_pkg-0.0.0-py3.10.egg-info' (and everything under it)
+[1.752s] Copying ../../build/my_launch_pkg/my_launch_pkg.egg-info to /home/seho/ros2_ws/install/my_launch_pkg/lib/python3.10/site-packages/my_launch_pkg-0.0.0-py3.10.egg-info
+[1.754s] running install_scripts
+[1.830s] writing list of installed files to '/home/seho/ros2_ws/build/my_launch_pkg/install.log'
+[1.878s] Invoked command in '/home/seho/ros2_ws/src/my_launch_pkg' returned '0': PYTHONPATH=/home/seho/ros2_ws/build/my_launch_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/seho/ros2_ws/install/my_launch_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/my_launch_pkg build --build-base /home/seho/ros2_ws/build/my_launch_pkg/build install --record /home/seho/ros2_ws/build/my_launch_pkg/install.log --single-version-externally-managed install_data
