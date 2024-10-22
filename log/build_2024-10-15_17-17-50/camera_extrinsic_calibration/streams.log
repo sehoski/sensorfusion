@@ -1,0 +1,27 @@
+[1.387s] Invoking command in '/home/seho/ros2_ws/src/camera_extrinsic_calibration': PYTHONPATH=/home/seho/ros2_ws/build/camera_extrinsic_calibration/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/seho/ros2_ws/install/camera_extrinsic_calibration/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/camera_extrinsic_calibration build --build-base /home/seho/ros2_ws/build/camera_extrinsic_calibration/build install --record /home/seho/ros2_ws/build/camera_extrinsic_calibration/install.log --single-version-externally-managed install_data
+[1.508s] /home/seho/.local/lib/python3.10/site-packages/setuptools/_distutils/dist.py:261: UserWarning: Unknown distribution option: 'tests_require'
+[1.508s]   warnings.warn(msg)
+[1.611s] running egg_info
+[1.624s] writing ../../build/camera_extrinsic_calibration/camera_extrinsic_calibration.egg-info/PKG-INFO
+[1.624s] writing dependency_links to ../../build/camera_extrinsic_calibration/camera_extrinsic_calibration.egg-info/dependency_links.txt
+[1.625s] writing entry points to ../../build/camera_extrinsic_calibration/camera_extrinsic_calibration.egg-info/entry_points.txt
+[1.625s] writing requirements to ../../build/camera_extrinsic_calibration/camera_extrinsic_calibration.egg-info/requires.txt
+[1.625s] writing top-level names to ../../build/camera_extrinsic_calibration/camera_extrinsic_calibration.egg-info/top_level.txt
+[1.655s] reading manifest file '../../build/camera_extrinsic_calibration/camera_extrinsic_calibration.egg-info/SOURCES.txt'
+[1.656s] writing manifest file '../../build/camera_extrinsic_calibration/camera_extrinsic_calibration.egg-info/SOURCES.txt'
+[1.656s] running build
+[1.656s] running build_py
+[1.656s] copying camera_extrinsic_calibration/camera_extrinsic_calibration_node.py -> /home/seho/ros2_ws/build/camera_extrinsic_calibration/build/lib/camera_extrinsic_calibration
+[1.657s] copying camera_extrinsic_calibration/__init__.py -> /home/seho/ros2_ws/build/camera_extrinsic_calibration/build/lib/camera_extrinsic_calibration
+[1.657s] running install
+[1.664s] running install_lib
+[1.678s] running install_data
+[1.678s] copying resource/camera_extrinsic_calibration -> /home/seho/ros2_ws/install/camera_extrinsic_calibration/share/ament_index/resource_index/packages
+[1.678s] copying package.xml -> /home/seho/ros2_ws/install/camera_extrinsic_calibration/share/camera_extrinsic_calibration
+[1.678s] running install_egg_info
+[1.696s] removing '/home/seho/ros2_ws/install/camera_extrinsic_calibration/lib/python3.10/site-packages/camera_extrinsic_calibration-0.0.0-py3.10.egg-info' (and everything under it)
+[1.696s] Copying ../../build/camera_extrinsic_calibration/camera_extrinsic_calibration.egg-info to /home/seho/ros2_ws/install/camera_extrinsic_calibration/lib/python3.10/site-packages/camera_extrinsic_calibration-0.0.0-py3.10.egg-info
+[1.697s] running install_scripts
+[1.795s] Installing camera_extrinsic_calibration script to /home/seho/ros2_ws/install/camera_extrinsic_calibration/lib/camera_extrinsic_calibration
+[1.795s] writing list of installed files to '/home/seho/ros2_ws/build/camera_extrinsic_calibration/install.log'
+[1.829s] Invoked command in '/home/seho/ros2_ws/src/camera_extrinsic_calibration' returned '0': PYTHONPATH=/home/seho/ros2_ws/build/camera_extrinsic_calibration/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/seho/ros2_ws/install/camera_extrinsic_calibration/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/camera_extrinsic_calibration build --build-base /home/seho/ros2_ws/build/camera_extrinsic_calibration/build install --record /home/seho/ros2_ws/build/camera_extrinsic_calibration/install.log --single-version-externally-managed install_data

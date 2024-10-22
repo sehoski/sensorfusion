@@ -1,0 +1,24 @@
+[1.396s] Invoking command in '/home/seho/ros2_ws/src/data_visualization': PYTHONPATH=/home/seho/ros2_ws/build/data_visualization/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/seho/ros2_ws/install/data_visualization/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/data_visualization build --build-base /home/seho/ros2_ws/build/data_visualization/build install --record /home/seho/ros2_ws/build/data_visualization/install.log --single-version-externally-managed
+[1.493s] /home/seho/.local/lib/python3.10/site-packages/setuptools/_distutils/dist.py:261: UserWarning: Unknown distribution option: 'tests_require'
+[1.494s]   warnings.warn(msg)
+[1.542s] running egg_info
+[1.554s] writing ../../build/data_visualization/data_visualization.egg-info/PKG-INFO
+[1.555s] writing dependency_links to ../../build/data_visualization/data_visualization.egg-info/dependency_links.txt
+[1.555s] writing entry points to ../../build/data_visualization/data_visualization.egg-info/entry_points.txt
+[1.556s] writing requirements to ../../build/data_visualization/data_visualization.egg-info/requires.txt
+[1.556s] writing top-level names to ../../build/data_visualization/data_visualization.egg-info/top_level.txt
+[1.577s] reading manifest file '../../build/data_visualization/data_visualization.egg-info/SOURCES.txt'
+[1.578s] writing manifest file '../../build/data_visualization/data_visualization.egg-info/SOURCES.txt'
+[1.578s] running build
+[1.578s] running build_py
+[1.578s] copying data_visualization/__init__.py -> /home/seho/ros2_ws/build/data_visualization/build/lib/data_visualization
+[1.578s] copying data_visualization/data_visualization_node.py -> /home/seho/ros2_ws/build/data_visualization/build/lib/data_visualization
+[1.579s] running install
+[1.582s] running install_lib
+[1.591s] running install_egg_info
+[1.601s] removing '/home/seho/ros2_ws/install/data_visualization/lib/python3.10/site-packages/data_visualization-0.0.0-py3.10.egg-info' (and everything under it)
+[1.602s] Copying ../../build/data_visualization/data_visualization.egg-info to /home/seho/ros2_ws/install/data_visualization/lib/python3.10/site-packages/data_visualization-0.0.0-py3.10.egg-info
+[1.602s] running install_scripts
+[1.683s] Installing data_visualization script to /home/seho/ros2_ws/install/data_visualization/lib/data_visualization
+[1.684s] writing list of installed files to '/home/seho/ros2_ws/build/data_visualization/install.log'
+[1.707s] Invoked command in '/home/seho/ros2_ws/src/data_visualization' returned '0': PYTHONPATH=/home/seho/ros2_ws/build/data_visualization/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/seho/ros2_ws/install/data_visualization/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/data_visualization build --build-base /home/seho/ros2_ws/build/data_visualization/build install --record /home/seho/ros2_ws/build/data_visualization/install.log --single-version-externally-managed

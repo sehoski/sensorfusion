@@ -1,0 +1,31 @@
+[0.411s] Invoking command in '/home/seho/ros2_ws/src/data_visualization': PYTHONPATH=/home/seho/ros2_ws/build/data_visualization/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/seho/ros2_ws/install/data_visualization/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/data_visualization build --build-base /home/seho/ros2_ws/build/data_visualization/build install --record /home/seho/ros2_ws/build/data_visualization/install.log --single-version-externally-managed
+[0.498s] /home/seho/.local/lib/python3.10/site-packages/setuptools/_distutils/dist.py:261: UserWarning: Unknown distribution option: 'tests_require'
+[0.498s]   warnings.warn(msg)
+[0.544s] running egg_info
+[0.545s] creating ../../build/data_visualization/data_visualization.egg-info
+[0.553s] writing ../../build/data_visualization/data_visualization.egg-info/PKG-INFO
+[0.554s] writing dependency_links to ../../build/data_visualization/data_visualization.egg-info/dependency_links.txt
+[0.554s] writing entry points to ../../build/data_visualization/data_visualization.egg-info/entry_points.txt
+[0.554s] writing requirements to ../../build/data_visualization/data_visualization.egg-info/requires.txt
+[0.554s] writing top-level names to ../../build/data_visualization/data_visualization.egg-info/top_level.txt
+[0.554s] writing manifest file '../../build/data_visualization/data_visualization.egg-info/SOURCES.txt'
+[0.572s] reading manifest file '../../build/data_visualization/data_visualization.egg-info/SOURCES.txt'
+[0.573s] writing manifest file '../../build/data_visualization/data_visualization.egg-info/SOURCES.txt'
+[0.573s] running build
+[0.573s] running build_py
+[0.574s] creating /home/seho/ros2_ws/build/data_visualization/build/lib/data_visualization
+[0.574s] copying data_visualization/__init__.py -> /home/seho/ros2_ws/build/data_visualization/build/lib/data_visualization
+[0.574s] copying data_visualization/data_visualization_node.py -> /home/seho/ros2_ws/build/data_visualization/build/lib/data_visualization
+[0.575s] running install
+[0.577s] running install_lib
+[0.586s] creating /home/seho/ros2_ws/install/data_visualization/lib/python3.10/site-packages/data_visualization
+[0.586s] copying /home/seho/ros2_ws/build/data_visualization/build/lib/data_visualization/__init__.py -> /home/seho/ros2_ws/install/data_visualization/lib/python3.10/site-packages/data_visualization
+[0.586s] copying /home/seho/ros2_ws/build/data_visualization/build/lib/data_visualization/data_visualization_node.py -> /home/seho/ros2_ws/install/data_visualization/lib/python3.10/site-packages/data_visualization
+[0.586s] byte-compiling /home/seho/ros2_ws/install/data_visualization/lib/python3.10/site-packages/data_visualization/__init__.py to __init__.cpython-310.pyc
+[0.587s] byte-compiling /home/seho/ros2_ws/install/data_visualization/lib/python3.10/site-packages/data_visualization/data_visualization_node.py to data_visualization_node.cpython-310.pyc
+[0.587s] running install_egg_info
+[0.597s] Copying ../../build/data_visualization/data_visualization.egg-info to /home/seho/ros2_ws/install/data_visualization/lib/python3.10/site-packages/data_visualization-0.0.0-py3.10.egg-info
+[0.598s] running install_scripts
+[0.673s] Installing data_visualization script to /home/seho/ros2_ws/install/data_visualization/lib/data_visualization
+[0.674s] writing list of installed files to '/home/seho/ros2_ws/build/data_visualization/install.log'
+[0.692s] Invoked command in '/home/seho/ros2_ws/src/data_visualization' returned '0': PYTHONPATH=/home/seho/ros2_ws/build/data_visualization/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/seho/ros2_ws/install/data_visualization/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/data_visualization build --build-base /home/seho/ros2_ws/build/data_visualization/build install --record /home/seho/ros2_ws/build/data_visualization/install.log --single-version-externally-managed

@@ -1,2 +1,2 @@
 [console_scripts]
-sensor_data_recorder = sensor_data_recorder.sensor_data_recorder:main
+sensor_data_recorder_node = sensor_data_recorder.sensor_data_recorder:main

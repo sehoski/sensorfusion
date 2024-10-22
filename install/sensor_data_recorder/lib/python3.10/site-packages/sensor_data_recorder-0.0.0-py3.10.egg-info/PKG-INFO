@@ -1,8 +1,8 @@
 Metadata-Version: 2.1
 Name: sensor_data_recorder
 Version: 0.0.0
-Summary: TODO: Package description
-Maintainer: seho
-Maintainer-email: sehoski@naver.com
-License: TODO: License declaration
+Summary: Description of the package
+Maintainer: your_name
+Maintainer-email: your_email@example.com
+License: License type
 Requires-Dist: setuptools

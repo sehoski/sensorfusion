@@ -1,0 +1,27 @@
+[1.757s] Invoking command in '/home/seho/ros2_ws/src/sensor_calibration': PYTHONPATH=/home/seho/ros2_ws/build/sensor_calibration/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/seho/ros2_ws/install/sensor_calibration/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/sensor_calibration build --build-base /home/seho/ros2_ws/build/sensor_calibration/build install --record /home/seho/ros2_ws/build/sensor_calibration/install.log --single-version-externally-managed install_data
+[1.855s] /home/seho/.local/lib/python3.10/site-packages/setuptools/_distutils/dist.py:261: UserWarning: Unknown distribution option: 'tests_require'
+[1.855s]   warnings.warn(msg)
+[1.919s] running egg_info
+[1.929s] writing ../../build/sensor_calibration/sensor_calibration.egg-info/PKG-INFO
+[1.935s] writing dependency_links to ../../build/sensor_calibration/sensor_calibration.egg-info/dependency_links.txt
+[1.935s] writing entry points to ../../build/sensor_calibration/sensor_calibration.egg-info/entry_points.txt
+[1.935s] writing requirements to ../../build/sensor_calibration/sensor_calibration.egg-info/requires.txt
+[1.935s] writing top-level names to ../../build/sensor_calibration/sensor_calibration.egg-info/top_level.txt
+[1.979s] reading manifest file '../../build/sensor_calibration/sensor_calibration.egg-info/SOURCES.txt'
+[1.982s] writing manifest file '../../build/sensor_calibration/sensor_calibration.egg-info/SOURCES.txt'
+[1.983s] running build
+[1.983s] running build_py
+[1.993s] copying sensor_calibration/external_calibration_node.py -> /home/seho/ros2_ws/build/sensor_calibration/build/lib/sensor_calibration
+[2.000s] copying sensor_calibration/__init__.py -> /home/seho/ros2_ws/build/sensor_calibration/build/lib/sensor_calibration
+[2.000s] running install
+[2.002s] running install_lib
+[2.012s] running install_data
+[2.017s] copying resource/sensor_calibration -> /home/seho/ros2_ws/install/sensor_calibration/share/ament_index/resource_index/packages
+[2.017s] copying package.xml -> /home/seho/ros2_ws/install/sensor_calibration/share/sensor_calibration
+[2.017s] running install_egg_info
+[2.031s] removing '/home/seho/ros2_ws/install/sensor_calibration/lib/python3.10/site-packages/sensor_calibration-0.0.0-py3.10.egg-info' (and everything under it)
+[2.032s] Copying ../../build/sensor_calibration/sensor_calibration.egg-info to /home/seho/ros2_ws/install/sensor_calibration/lib/python3.10/site-packages/sensor_calibration-0.0.0-py3.10.egg-info
+[2.034s] running install_scripts
+[2.142s] Installing external_calibration_node script to /home/seho/ros2_ws/install/sensor_calibration/lib/sensor_calibration
+[2.144s] writing list of installed files to '/home/seho/ros2_ws/build/sensor_calibration/install.log'
+[2.223s] Invoked command in '/home/seho/ros2_ws/src/sensor_calibration' returned '0': PYTHONPATH=/home/seho/ros2_ws/build/sensor_calibration/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/seho/ros2_ws/install/sensor_calibration/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/sensor_calibration build --build-base /home/seho/ros2_ws/build/sensor_calibration/build install --record /home/seho/ros2_ws/build/sensor_calibration/install.log --single-version-externally-managed install_data

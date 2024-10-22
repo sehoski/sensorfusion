@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: data_visualization
+Version: 0.0.0
+Summary: A package for playing back recorded sensor data
+Maintainer: Your Name
+Maintainer-email: your.email@example.com
+License: Your License
+Requires-Dist: setuptools

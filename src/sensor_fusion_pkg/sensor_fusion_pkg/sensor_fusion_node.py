@@ -8,7 +8,7 @@ import cv2
 class TimeSyncNode(Node):
     def __init__(self):
         super().__init__('time_sync_node')
-
+        
         self.get_logger().info('Initializing TimeSyncNode')
 
         self.camera_sub = Subscriber(self, Image, 'camera/image_raw')

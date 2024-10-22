@@ -9,7 +9,6 @@ setup.py
 ../../build/radar_package/radar_package.egg-info/top_level.txt
 ../../build/radar_package/radar_package.egg-info/zip-safe
 radar_package/__init__.py
-radar_package/radar_node.py
 resource/radar_package
 test/test_copyright.py
 test/test_flake8.py

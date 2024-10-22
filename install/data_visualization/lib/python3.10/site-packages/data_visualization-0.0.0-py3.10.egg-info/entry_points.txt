@@ -1,0 +1,2 @@
+[console_scripts]
+data_visualization = data_visualization.data_visualization_node:main

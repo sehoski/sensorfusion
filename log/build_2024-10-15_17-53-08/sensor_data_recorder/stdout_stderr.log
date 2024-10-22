@@ -1,0 +1,22 @@
+running egg_info
+writing ../../build/sensor_data_recorder/sensor_data_recorder.egg-info/PKG-INFO
+writing dependency_links to ../../build/sensor_data_recorder/sensor_data_recorder.egg-info/dependency_links.txt
+writing entry points to ../../build/sensor_data_recorder/sensor_data_recorder.egg-info/entry_points.txt
+writing requirements to ../../build/sensor_data_recorder/sensor_data_recorder.egg-info/requires.txt
+writing top-level names to ../../build/sensor_data_recorder/sensor_data_recorder.egg-info/top_level.txt
+reading manifest file '../../build/sensor_data_recorder/sensor_data_recorder.egg-info/SOURCES.txt'
+writing manifest file '../../build/sensor_data_recorder/sensor_data_recorder.egg-info/SOURCES.txt'
+running build
+running build_py
+copying sensor_data_recorder/__init__.py -> /home/seho/ros2_ws/build/sensor_data_recorder/build/lib/sensor_data_recorder
+copying sensor_data_recorder/sensor_data_recorder.py -> /home/seho/ros2_ws/build/sensor_data_recorder/build/lib/sensor_data_recorder
+running install
+running install_lib
+running install_egg_info
+removing '/home/seho/ros2_ws/install/sensor_data_recorder/lib/python3.10/site-packages/sensor_data_recorder-0.0.0-py3.10.egg-info' (and everything under it)
+Copying ../../build/sensor_data_recorder/sensor_data_recorder.egg-info to /home/seho/ros2_ws/install/sensor_data_recorder/lib/python3.10/site-packages/sensor_data_recorder-0.0.0-py3.10.egg-info
+running install_scripts
+Installing sensor_data_recorder_node script to /home/seho/ros2_ws/install/sensor_data_recorder/lib/sensor_data_recorder
+writing list of installed files to '/home/seho/ros2_ws/build/sensor_data_recorder/install.log'
+/home/seho/.local/lib/python3.10/site-packages/setuptools/_distutils/dist.py:261: UserWarning: Unknown distribution option: 'tests_require'
+  warnings.warn(msg)

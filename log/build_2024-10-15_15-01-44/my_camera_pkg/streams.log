@@ -1,0 +1,35 @@
+[1.410s] Invoking command in '/home/seho/ros2_ws/src/my_camera_pkg': PYTHONPATH=/home/seho/ros2_ws/build/my_camera_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/seho/ros2_ws/install/my_camera_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/my_camera_pkg build --build-base /home/seho/ros2_ws/build/my_camera_pkg/build install --record /home/seho/ros2_ws/build/my_camera_pkg/install.log --single-version-externally-managed install_data
+[1.517s] /home/seho/.local/lib/python3.10/site-packages/setuptools/_distutils/dist.py:261: UserWarning: Unknown distribution option: 'tests_require'
+[1.517s]   warnings.warn(msg)
+[1.584s] running egg_info
+[1.584s] creating ../../build/my_camera_pkg/my_camera_pkg.egg-info
+[1.592s] writing ../../build/my_camera_pkg/my_camera_pkg.egg-info/PKG-INFO
+[1.593s] writing dependency_links to ../../build/my_camera_pkg/my_camera_pkg.egg-info/dependency_links.txt
+[1.593s] writing entry points to ../../build/my_camera_pkg/my_camera_pkg.egg-info/entry_points.txt
+[1.593s] writing requirements to ../../build/my_camera_pkg/my_camera_pkg.egg-info/requires.txt
+[1.593s] writing top-level names to ../../build/my_camera_pkg/my_camera_pkg.egg-info/top_level.txt
+[1.593s] writing manifest file '../../build/my_camera_pkg/my_camera_pkg.egg-info/SOURCES.txt'
+[1.635s] reading manifest file '../../build/my_camera_pkg/my_camera_pkg.egg-info/SOURCES.txt'
+[1.635s] writing manifest file '../../build/my_camera_pkg/my_camera_pkg.egg-info/SOURCES.txt'
+[1.635s] running build
+[1.641s] running build_py
+[1.641s] creating /home/seho/ros2_ws/build/my_camera_pkg/build/lib/my_camera_pkg
+[1.641s] copying my_camera_pkg/__init__.py -> /home/seho/ros2_ws/build/my_camera_pkg/build/lib/my_camera_pkg
+[1.641s] copying my_camera_pkg/camera_node.py -> /home/seho/ros2_ws/build/my_camera_pkg/build/lib/my_camera_pkg
+[1.641s] running install
+[1.644s] running install_lib
+[1.663s] creating /home/seho/ros2_ws/install/my_camera_pkg/lib/python3.10/site-packages/my_camera_pkg
+[1.663s] copying /home/seho/ros2_ws/build/my_camera_pkg/build/lib/my_camera_pkg/__init__.py -> /home/seho/ros2_ws/install/my_camera_pkg/lib/python3.10/site-packages/my_camera_pkg
+[1.663s] copying /home/seho/ros2_ws/build/my_camera_pkg/build/lib/my_camera_pkg/camera_node.py -> /home/seho/ros2_ws/install/my_camera_pkg/lib/python3.10/site-packages/my_camera_pkg
+[1.664s] byte-compiling /home/seho/ros2_ws/install/my_camera_pkg/lib/python3.10/site-packages/my_camera_pkg/__init__.py to __init__.cpython-310.pyc
+[1.664s] byte-compiling /home/seho/ros2_ws/install/my_camera_pkg/lib/python3.10/site-packages/my_camera_pkg/camera_node.py to camera_node.cpython-310.pyc
+[1.669s] running install_data
+[1.669s] creating /home/seho/ros2_ws/install/my_camera_pkg/share/ament_index/resource_index/packages
+[1.669s] copying resource/my_camera_pkg -> /home/seho/ros2_ws/install/my_camera_pkg/share/ament_index/resource_index/packages
+[1.669s] copying package.xml -> /home/seho/ros2_ws/install/my_camera_pkg/share/my_camera_pkg
+[1.669s] running install_egg_info
+[1.687s] Copying ../../build/my_camera_pkg/my_camera_pkg.egg-info to /home/seho/ros2_ws/install/my_camera_pkg/lib/python3.10/site-packages/my_camera_pkg-0.0.0-py3.10.egg-info
+[1.687s] running install_scripts
+[1.790s] Installing camera_node script to /home/seho/ros2_ws/install/my_camera_pkg/lib/my_camera_pkg
+[1.790s] writing list of installed files to '/home/seho/ros2_ws/build/my_camera_pkg/install.log'
+[1.809s] Invoked command in '/home/seho/ros2_ws/src/my_camera_pkg' returned '0': PYTHONPATH=/home/seho/ros2_ws/build/my_camera_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/seho/ros2_ws/install/my_camera_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/my_camera_pkg build --build-base /home/seho/ros2_ws/build/my_camera_pkg/build install --record /home/seho/ros2_ws/build/my_camera_pkg/install.log --single-version-externally-managed install_data
